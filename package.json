@@ -1,0 +1,31 @@
+{
+  "name": "example-orderbook-server",
+  "version": "0.1.0",
+  "description": "Example Wyvern Protocol orderbook server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ProjectWyvern/example-orderbook-server.git"
+  },
+  "keywords": [
+    "Project Wyvern",
+    "Ethereum",
+    "Smart Contracts"
+  ],
+  "author": "Project Wyvern Developers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ProjectWyvern/example-orderbook-server/issues"
+  },
+  "homepage": "https://github.com/ProjectWyvern/example-orderbook-server#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "bunyan": "^1.8.12",
+    "express": "^4.16.2",
+    "sequelize": "^4.31.2",
+    "sqlite3": "^3.1.13"
+  }
+}
