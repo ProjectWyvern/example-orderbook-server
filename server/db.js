@@ -12,14 +12,18 @@ const sequelize = new Sequelize('wyvernOrderbook', null, null, {
 })
 
 const Order = sequelize.define('order', {
-  hash: {type: Sequelize.TEXT, allowNull: false, unique: true},
+  hash: {type: Sequelize.TEXT, allowNull: false, primaryKey: true},
   metadata: {type: Sequelize.JSON, allowNull: false},
   exchange: {type: Sequelize.TEXT, allowNull: false},
-  initiator: {type: Sequelize.TEXT, allowNull: false},
-  side: {type: Sequelize.INTEGER.UNSIGNED, allowNull: false},
-  saleKind: {type: Sequelize.INTEGER.UNSIGNED, allowNull: false},
+  maker: {type: Sequelize.TEXT, allowNull: false},
+  taker: {type: Sequelize.TEXT, allowNull: false},
+  makerFee: {type: Sequelize.TEXT, allowNull: false},
+  takerFee: {type: Sequelize.TEXT, allowNull: false},
+  feeRecipient: {type: Sequelize.TEXT, allowNull: false},
+  side: {type: Sequelize.TEXT, allowNull: false},
+  saleKind: {type: Sequelize.TEXT, allowNull: false},
   target: {type: Sequelize.TEXT, allowNull: false},
-  howToCall: {type: Sequelize.INTEGER.UNSIGNED, allowNull: false},
+  howToCall: {type: Sequelize.TEXT, allowNull: false},
   calldata: {type: Sequelize.TEXT, allowNull: false},
   replacementPattern: {type: Sequelize.TEXT, allowNull: false},
   metadataHash: {type: Sequelize.TEXT, allowNull: false},
@@ -28,15 +32,21 @@ const Order = sequelize.define('order', {
   extra: {type: Sequelize.TEXT, allowNull: false},
   listingTime: {type: Sequelize.TEXT, allowNull: false},
   expirationTime: {type: Sequelize.TEXT, allowNull: false},
-  frontend: {type: Sequelize.TEXT, allowNull: false},
-  salt: {type: Sequelize.TEXT, allowNull: false}
+  salt: {type: Sequelize.TEXT, allowNull: false},
+  v: {type: Sequelize.TEXT, allowNull: false},
+  r: {type: Sequelize.TEXT, allowNull: false},
+  s: {type: Sequelize.TEXT, allowNull: false}
 })
 
 const encodeOrder = (order) => ({
   hash: order.hash,
   metadata: order.metadata,
   exchange: order.exchange,
-  initiator: order.initiator,
+  maker: order.maker,
+  taker: order.taker,
+  makerFee: order.makerFee,
+  takerFee: order.takerFee,
+  feeRecipient: order.feeRecipient,
   side: order.side,
   saleKind: order.saleKind,
   target: order.target,
@@ -45,19 +55,25 @@ const encodeOrder = (order) => ({
   replacementPattern: order.replacementPattern,
   metadataHash: order.metadataHash,
   paymentToken: order.paymentToken,
-  basePrice: JSON.stringify(order.basePrice),
-  extra: JSON.stringify(order.extra),
-  listingTime: JSON.stringify(order.listingTime),
-  expirationTime: JSON.stringify(order.expirationTime),
-  frontend: order.frontend,
-  salt: JSON.stringify(order.salt)
+  basePrice: order.basePrice,
+  extra: order.extra,
+  listingTime: order.listingTime,
+  expirationTime: order.expirationTime,
+  salt: order.salt,
+  v: order.v,
+  r: order.r,
+  s: order.s
 })
 
 const decodeOrder = (order) => ({
   hash: order.hash,
   metadata: order.metadata,
   exchange: order.exchange,
-  initiator: order.initiator,
+  maker: order.maker,
+  taker: order.taker,
+  makerFee: order.makerFee,
+  takerFee: order.takerFee,
+  feeRecipient: order.feeRecipient,
   side: order.side,
   saleKind: order.saleKind,
   target: order.target,
@@ -66,12 +82,14 @@ const decodeOrder = (order) => ({
   replacementPattern: order.replacementPattern,
   metadataHash: order.metadataHash,
   paymentToken: order.paymentToken,
-  basePrice: JSON.parse(order.basePrice),
-  extra: JSON.parse(order.extra),
-  listingTime: JSON.parse(order.listingTime),
-  expirationTime: JSON.parse(order.expirationTime),
-  frontend: order.frontend,
-  salt: JSON.parse(order.salt)
+  basePrice: order.basePrice,
+  extra: order.extra,
+  listingTime: order.listingTime,
+  expirationTime: order.expirationTime,
+  salt: order.salt,
+  v: order.v,
+  r: order.r,
+  s: order.s
 })
 
 module.exports = {
