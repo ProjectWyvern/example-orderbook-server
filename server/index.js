@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-// const helmet = require('helmet')
+const helmet = require('helmet')
 const { WyvernProtocol } = require('wyvern-js')
 
 const { sequelize, Order, encodeOrder, decodeOrder } = require('./db.js')
@@ -18,7 +18,7 @@ const fail = (req, res, status, err) => {
 }
 
 const app = express()
-// app.use(helmet())
+app.use(helmet())
 app.use(bodyParser.json())
 app.use((req, res, next) => {
   const start = Date.now() / 1000
@@ -72,14 +72,18 @@ router.post('/orders/validate', (req, res) => {
 
 app.use('/v1', router)
 
-const go = ({ port, provider, network }) => {
+const go = ({ port, provider, network, email, domain }) => {
   sequelize
     .sync()
     .then(() => {
-      app.listen(port, () => {
-        log.debug({origin: 'express', port: port}, 'Server started')
-        scan(provider, network)
-      })
+      scan(provider, network)
+      require('greenlock-express').create({
+        server: 'https://acme-v01.api.letsencrypt.org/directory',
+        email: email,
+        agreeTos: true,
+        approveDomains: [domain],
+        app: app
+      }).listen(80, 443)
     })
 }
 
