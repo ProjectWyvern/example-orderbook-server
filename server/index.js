@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 const router = express.Router()
 
 router.get('/orders', (req, res) => {
-  return Order.findAll().then(orders => {
+  return Order.findAll({where: {cancelledOrFinalized: false}}).then(orders => {
     res.json({result: orders.map(decodeOrder), error: null})
   }).catch(err => {
     fail(req, res, 500, err)

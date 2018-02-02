@@ -26,7 +26,8 @@ const Order = sequelize.define('order', {
   howToCall: {type: Sequelize.TEXT, allowNull: false},
   calldata: {type: Sequelize.TEXT, allowNull: false},
   replacementPattern: {type: Sequelize.TEXT, allowNull: false},
-  metadataHash: {type: Sequelize.TEXT, allowNull: false},
+  staticTarget: {type: Sequelize.TEXT, allowNull: false},
+  staticExtradata: {type: Sequelize.TEXT, allowNull: false},
   paymentToken: {type: Sequelize.TEXT, allowNull: false},
   basePrice: {type: Sequelize.TEXT, allowNull: false},
   extra: {type: Sequelize.TEXT, allowNull: false},
@@ -35,7 +36,8 @@ const Order = sequelize.define('order', {
   salt: {type: Sequelize.TEXT, allowNull: false},
   v: {type: Sequelize.TEXT, allowNull: false},
   r: {type: Sequelize.TEXT, allowNull: false},
-  s: {type: Sequelize.TEXT, allowNull: false}
+  s: {type: Sequelize.TEXT, allowNull: false},
+  cancelledOrFinalized: {type: Sequelize.BOOLEAN, allowNull: false}
 })
 
 const encodeOrder = (order) => ({
@@ -53,7 +55,8 @@ const encodeOrder = (order) => ({
   howToCall: order.howToCall,
   calldata: order.calldata,
   replacementPattern: order.replacementPattern,
-  metadataHash: order.metadataHash,
+  staticTarget: order.staticTarget,
+  staticExtradata: order.staticExtradata,
   paymentToken: order.paymentToken,
   basePrice: order.basePrice,
   extra: order.extra,
@@ -62,7 +65,8 @@ const encodeOrder = (order) => ({
   salt: order.salt,
   v: order.v,
   r: order.r,
-  s: order.s
+  s: order.s,
+  cancelledOrFinalized: false
 })
 
 const decodeOrder = (order) => ({
@@ -80,7 +84,8 @@ const decodeOrder = (order) => ({
   howToCall: order.howToCall,
   calldata: order.calldata,
   replacementPattern: order.replacementPattern,
-  metadataHash: order.metadataHash,
+  staticTarget: order.staticTarget,
+  staticExtradata: order.staticExtradata,
   paymentToken: order.paymentToken,
   basePrice: order.basePrice,
   extra: order.extra,
@@ -89,7 +94,8 @@ const decodeOrder = (order) => ({
   salt: order.salt,
   v: order.v,
   r: order.r,
-  s: order.s
+  s: order.s,
+  cancelledOrFinalized: order.cancelledOrFinalized
 })
 
 module.exports = {

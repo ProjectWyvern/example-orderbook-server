@@ -23,10 +23,10 @@
     web3 "^0.20.0"
 
 "@0xproject/abi-gen@^0.1.1":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@0xproject/abi-gen/-/abi-gen-0.1.2.tgz#a74baa088f94ff83431573b5a3e010ccbb5ba300"
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@0xproject/abi-gen/-/abi-gen-0.1.5.tgz#b3bfaacff75c47ce37e2add6e0098d075b9ea191"
   dependencies:
-    "@0xproject/utils" "^0.2.0"
+    "@0xproject/utils" "^0.2.3"
     chalk "^2.3.0"
     glob "^7.1.2"
     handlebars "^4.0.11"
@@ -55,17 +55,17 @@
     valid-url "^1.0.9"
 
 "@0xproject/json-schemas@^0.7.2", "@0xproject/json-schemas@^0.7.3":
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/@0xproject/json-schemas/-/json-schemas-0.7.3.tgz#8a532adc16e77519fc66b46d2dfd868b5506a4a4"
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@0xproject/json-schemas/-/json-schemas-0.7.6.tgz#2ec7043901a0f18b68e8e961f1710378b2fb78d7"
   dependencies:
     jsonschema "^1.2.0"
     lodash.values "^4.3.0"
 
 "@0xproject/types@^0.1.3":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@0xproject/types/-/types-0.1.4.tgz#fadbcdd9dc57d96453ca164fa5c8fe048a7ddde6"
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@0xproject/types/-/types-0.1.7.tgz#8a5fa1c21bc8f1e8284512796d32027603dd54aa"
   dependencies:
-    "@0xproject/utils" "^0.2.0"
+    "@0xproject/utils" "^0.2.3"
     web3 "^0.20.0"
 
 "@0xproject/utils@^0.1.3":
@@ -76,19 +76,19 @@
     js-sha3 "^0.7.0"
     lodash "^4.17.4"
 
-"@0xproject/utils@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@0xproject/utils/-/utils-0.2.0.tgz#0a6f88dd398872211b941cb6ce75094499894f11"
+"@0xproject/utils@^0.2.0", "@0xproject/utils@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@0xproject/utils/-/utils-0.2.3.tgz#583df7e3e0284e1e4e163dcd7f0af0bad0bb9650"
   dependencies:
     bignumber.js "~4.1.0"
     js-sha3 "^0.7.0"
     lodash "^4.17.4"
 
 "@0xproject/web3-wrapper@^0.1.4":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@0xproject/web3-wrapper/-/web3-wrapper-0.1.5.tgz#8e33c6763fdf08383d84a66a3d680c092fc59106"
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@0xproject/web3-wrapper/-/web3-wrapper-0.1.8.tgz#ae6e8d30872ab65fb1f0078df5edc1d30d34b33c"
   dependencies:
-    "@0xproject/utils" "^0.2.0"
+    "@0xproject/utils" "^0.2.3"
     lodash "^4.17.4"
     web3 "^0.20.0"
 
@@ -97,12 +97,12 @@
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-1.0.6.tgz#3e02972728c69248c2af08d60a48cbb8680fffdf"
 
 "@types/lodash@^4.14.92":
-  version "4.14.94"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.94.tgz#c4166f7d8291691a0d34fa41afb15d0fe755187d"
+  version "4.14.98"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.98.tgz#aaf012ae443e657e7885e605a4c1b340db160609"
 
 "@types/node@*", "@types/node@^9.3.0":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.3.0.tgz#3a129cda7c4e5df2409702626892cb4b96546dd5"
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-9.4.0.tgz#b85a0bcf1e1cc84eb4901b7e96966aedc6f078d1"
 
 abbrev@1:
   version "1.1.1"
@@ -945,8 +945,8 @@ doctrine@^0.7.2:
     isarray "0.0.1"
 
 domain-browser@^1.1.1:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.1.7.tgz#867aa4b093faa05f1de08c06f4d7b21fdf8698bc"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/domain-browser/-/domain-browser-1.2.0.tgz#3d31f50191a6749dd1375a7f522e823d42e54eda"
 
 dont-sniff-mimetype@1.0.0:
   version "1.0.0"
@@ -2737,8 +2737,8 @@ raw-body@2.3.2:
     unpipe "1.0.0"
 
 rc@^1.1.7:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.4.tgz#a0f606caae2a3b862bbd0ef85482c0125b315fa3"
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.5.tgz#275cd687f6e3b36cc756baa26dfee80a790301fd"
   dependencies:
     deep-extend "~0.4.0"
     ini "~1.3.0"
@@ -2918,8 +2918,8 @@ safe-replace@^1.0.2:
   resolved "https://registry.yarnpkg.com/safe-replace/-/safe-replace-1.0.2.tgz#b181ab4095acdf6ab0a8f840517491ca8a9922ba"
 
 secp256k1@^3.0.1:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/secp256k1/-/secp256k1-3.4.0.tgz#1c905b256fa4ae5b9cc170e672dd59b4c5de46a4"
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/secp256k1/-/secp256k1-3.5.0.tgz#677d3b8a8e04e1a5fa381a1ae437c54207b738d0"
   dependencies:
     bindings "^1.2.1"
     bip66 "^1.1.3"
@@ -2957,8 +2957,8 @@ send@0.16.1:
     statuses "~1.3.1"
 
 sequelize@^4.31.2:
-  version "4.32.1"
-  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-4.32.1.tgz#6761d0af31e2fa9ea61081a8b0f6a0c56dcec2a0"
+  version "4.32.2"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-4.32.2.tgz#de5924f6b904cabfbde1f9f8886d1be14ecf9e42"
   dependencies:
     bluebird "^3.4.6"
     cls-bluebird "^2.0.1"
@@ -3315,8 +3315,8 @@ terraformer@~1.0.5:
     "@types/geojson" "^1.0.0"
 
 timers-browserify@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.4.tgz#96ca53f4b794a5e7c0e1bd7cc88a372298fa01e6"
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.6.tgz#241e76927d9ca05f4d959819022f5b3664b64bae"
   dependencies:
     setimmediate "^1.0.4"
 
@@ -3558,8 +3558,8 @@ validate-npm-package-license@^3.0.1:
     spdx-expression-parse "~1.0.0"
 
 validator@^9.1.0:
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/validator/-/validator-9.2.0.tgz#ad216eed5f37cac31a6fe00ceab1f6b88bded03e"
+  version "9.4.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-9.4.0.tgz#c503ef88f7e6b8fb7688599267b309482d81ae60"
 
 vary@~1.1.2:
   version "1.1.2"
@@ -3702,6 +3702,9 @@ wrappy@1:
     typescript "^2.6.2"
     web3 "^0.20.4"
     webpack "^3.10.0"
+
+"wyvern-schemas@file:../wyvern-schemas":
+  version "0.1.0"
 
 x-xss-protection@1.0.0:
   version "1.0.0"
