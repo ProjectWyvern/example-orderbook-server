@@ -1,5 +1,4 @@
 const Web3 = require('web3')
-const { encodeCall } = require('wyvern-schemas')
 const { WyvernProtocol } = require('wyvern-js')
 
 const { Order } = require('./db.js')
@@ -29,20 +28,18 @@ const scan = (provider, network) => {
             log.info('Order ' + order.hash + ' marked cancelled or finalized')
           })
         } else {
-          /*
           if (order.side === '1') {
             const proxyABI = {'constant': false, 'inputs': [{'name': 'dest', 'type': 'address'}, {'name': 'howToCall', 'type': 'uint8'}, {'name': 'calldata', 'type': 'bytes'}], 'name': 'proxy', 'outputs': [{'name': 'success', 'type': 'bool'}], 'payable': false, 'stateMutability': 'nonpayable', 'type': 'function'}
-            const calldata = encodeCall(proxyABI, [order.target, order.howToCall, order.calldata])
             const proxy = await protocolInstance.wyvernProxyRegistry.proxies.callAsync(order.maker)
-            web3.eth.call({
-              from: order.maker,
-              to: proxy,
-              data: calldata
-            }, (err, res) => {
-              console.log(err, res)
+            const contract = (web3.eth.contract([proxyABI])).at(proxy)
+            contract.proxy.call(order.target, order.howToCall, order.calldata, {from: order.maker}, (_, res) => {
+              if (!res) {
+                order.destroy().then(() => {
+                  log.info('Order ' + order.hash + ' could not be executed, deleted')
+                })
+              }
             })
           }
-          */
         }
       })
     })
