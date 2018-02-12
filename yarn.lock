@@ -3534,7 +3534,7 @@ watchpack@^1.4.0:
     chokidar "^1.7.0"
     graceful-fs "^4.1.2"
 
-web3@^0.20.0, web3@^0.20.4:
+web3@0.20.4, web3@^0.20.0, web3@^0.20.4:
   version "0.20.4"
   resolved "https://registry.yarnpkg.com/web3/-/web3-0.20.4.tgz#400e6579a65bb4a3dde71a6ebf6509afadc33a04"
   dependencies:
@@ -3649,9 +3649,6 @@ wrappy@1:
     typescript "^2.6.2"
     web3 "^0.20.4"
     webpack "^3.10.0"
-
-"wyvern-schemas@file:../wyvern-schemas":
-  version "0.1.0"
 
 x-xss-protection@1.0.0:
   version "1.0.0"

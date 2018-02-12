@@ -29,7 +29,6 @@
     "pg": "^7.4.1",
     "sequelize": "^4.31.2",
     "web3": "^0.20.4",
-    "wyvern-js": "file:../wyvern-js",
-    "wyvern-schemas": "file:../wyvern-schemas"
+    "wyvern-js": "file:../wyvern-js"
   }
 }

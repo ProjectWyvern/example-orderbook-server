@@ -12,6 +12,8 @@ const sequelize = new Sequelize('orderbook', 'postgres', 'postgres', {
 
 const Order = sequelize.define('order', {
   hash: {type: Sequelize.TEXT, allowNull: false, primaryKey: true},
+  title: {type: Sequelize.TEXT, allowNull: true},
+  schema: {type: Sequelize.TEXT, allowNull: true},
   metadata: {type: Sequelize.JSON, allowNull: false},
   exchange: {type: Sequelize.TEXT, allowNull: false},
   maker: {type: Sequelize.TEXT, allowNull: false},
@@ -42,11 +44,14 @@ const Order = sequelize.define('order', {
   indexes: [
     {name: 'listingTime_index', method: 'BTREE', fields: ['listingTime']},
     {name: 'expirationTime_index', method: 'BTREE', fields: ['expirationTime']}
-  ]
+  ],
+  version: true
 })
 
 const encodeOrder = (order) => ({
   hash: order.hash,
+  title: order.metadata.title || null,
+  schema: order.metadata.schema || null,
   metadata: order.metadata,
   exchange: order.exchange,
   maker: order.maker,
@@ -102,11 +107,14 @@ const decodeOrder = (order) => ({
   r: order.r,
   s: order.s,
   cancelledOrFinalized: order.cancelledOrFinalized,
-  markedInvalid: order.markedInvalid
+  markedInvalid: order.markedInvalid,
+  createdAt: order.createdAt,
+  updatedAt: order.updatedAt
 })
 
 module.exports = {
   sequelize: sequelize,
+  Op: Sequelize.Op,
   Order: Order,
   encodeOrder: encodeOrder,
   decodeOrder: decodeOrder

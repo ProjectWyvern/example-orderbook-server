@@ -6,11 +6,9 @@ const log = require('./logging.js')
 
 const scan = (provider, network) => {
   const protocolInstance = new WyvernProtocol(new Web3.providers.HttpProvider(provider), { network })
-  const web3 = new Web3(provider)
+  const web3 = new Web3(new Web3.providers.HttpProvider(provider))
   const scanFunc = async () => {
     const start = Date.now() / 1000
-    var markedInvalid = 0
-    var cancelledOrFinalized = 0
     await Order.findAll({where: {cancelledOrFinalized: false}}).then(orders => {
       return Promise.all(orders.map(async order => {
         const valid = await protocolInstance.wyvernExchange.validateOrder_.callAsync(
@@ -28,7 +26,6 @@ const scan = (provider, network) => {
         if (!valid) {
           order.cancelledOrFinalized = true
           return order.save().then(() => {
-            cancelledOrFinalized++
             log.info('Order ' + order.hash + ' marked cancelled or finalized')
           })
         }
@@ -43,7 +40,6 @@ const scan = (provider, network) => {
           if (!res) {
             order.markedInvalid = true
             order.save().then(() => {
-              markedInvalid++
               log.info('Order ' + order.hash + ' marked invalid')
             })
           }
@@ -52,9 +48,10 @@ const scan = (provider, network) => {
     })
     const end = Date.now() / 1000
     const dt = Math.round((end - start) * 1000) / 1000
-    log.info({dt: dt + 's', markedInvalid, cancelledOrFinalized}, 'Orderbook scan completed')
+    log.info({dt: dt + 's'}, 'Orderbook scan completed')
+    setTimeout(scanFunc, 5000)
   }
-  setInterval(scanFunc, 5000)
+  scanFunc()
 }
 
 module.exports = scan
