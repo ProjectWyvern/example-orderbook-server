@@ -2,10 +2,9 @@ const Sequelize = require('sequelize')
 
 const log = require('./logging.js')
 
-const sequelize = new Sequelize('wyvernOrderbook', null, null, {
+const sequelize = new Sequelize('orderbook', 'postgres', 'postgres', {
   host: 'localhost',
-  dialect: 'sqlite',
-  storage: './db.sqlite',
+  dialect: 'postgres',
   pool: {max: 10, min: 0, acquire: 30000, idle: 10000},
   operatorsAliases: false,
   logging: (msg) => log.debug({origin: 'sequelize'}, msg)
@@ -37,7 +36,13 @@ const Order = sequelize.define('order', {
   v: {type: Sequelize.TEXT, allowNull: false},
   r: {type: Sequelize.TEXT, allowNull: false},
   s: {type: Sequelize.TEXT, allowNull: false},
-  cancelledOrFinalized: {type: Sequelize.BOOLEAN, allowNull: false}
+  cancelledOrFinalized: {type: Sequelize.BOOLEAN, allowNull: false},
+  markedInvalid: {type: Sequelize.BOOLEAN, allowNull: false}
+}, {
+  indexes: [
+    {name: 'listingTime_index', method: 'BTREE', fields: ['listingTime']},
+    {name: 'expirationTime_index', method: 'BTREE', fields: ['expirationTime']}
+  ]
 })
 
 const encodeOrder = (order) => ({
@@ -66,7 +71,8 @@ const encodeOrder = (order) => ({
   v: order.v,
   r: order.r,
   s: order.s,
-  cancelledOrFinalized: false
+  cancelledOrFinalized: false,
+  markedInvalid: false
 })
 
 const decodeOrder = (order) => ({
@@ -95,7 +101,8 @@ const decodeOrder = (order) => ({
   v: order.v,
   r: order.r,
   s: order.s,
-  cancelledOrFinalized: order.cancelledOrFinalized
+  cancelledOrFinalized: order.cancelledOrFinalized,
+  markedInvalid: order.markedInvalid
 })
 
 module.exports = {

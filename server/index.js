@@ -72,21 +72,15 @@ router.post('/orders/validate', (req, res) => {
 
 app.use('/v1', router)
 
-const go = ({ port, provider, network, email, domain }) => {
+const go = ({ port, provider, network, production }) => {
   sequelize
     .sync()
     .then(() => {
       scan(provider, network)
-      require('greenlock-express').create({
-        server: 'https://acme-v01.api.letsencrypt.org/directory',
-        email: email,
-        agreeTos: true,
-        approveDomains: [domain],
-        app: app
-      }).listen(80, 443)
+      app.listen(port, () => {
+        log.info('Listening on port ' + port)
+      })
     })
 }
 
-module.exports = {
-  go: go
-}
+module.exports = { go }
