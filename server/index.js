@@ -2,10 +2,15 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const helmet = require('helmet')
 
+const Web3 = require('web3')
+const { WyvernProtocol } = require('wyvern-js')
+
 const { sequelize, Op, Order, encodeOrder, decodeOrder } = require('./db.js')
 const { validateOrder } = require('./validate.js')
 const log = require('./logging.js')
 const scan = require('./scan.js')
+
+var protocolInstance
 
 const fail = (req, res, status, err) => {
   log.warn({error: err.message, origin: 'express', path: req.path}, 'Error processing request')
@@ -16,6 +21,13 @@ const fail = (req, res, status, err) => {
 const app = express()
 app.use(helmet())
 app.use(bodyParser.json())
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, HEAD')
+  res.header('Access-Control-Allow-Headers', 'Content-Type')
+  next()
+})
 
 const router = express.Router()
 
@@ -44,6 +56,9 @@ router.get('/orders', (req, res) => {
   }
   if (req.query.filter) {
     where.title = [Op.like, req.query.filter]
+  }
+  if (req.query.createdSince) {
+    where.createdAt = [Op.ge, parseInt(req.query.createdSince)]
   }
   var order = [['createdAt', 'DESC']]
   if (req.query.order) {
@@ -75,7 +90,7 @@ router.get('/orders/:hash', (req, res) => {
 
 router.post('/orders/post', (req, res) => {
   const order = req.body
-  return validateOrder(order).then(() => {
+  return validateOrder(protocolInstance, order).then(() => {
     return Order.create(encodeOrder(order)).then(() => {
       res.json({result: true, error: null})
     })
@@ -86,7 +101,7 @@ router.post('/orders/post', (req, res) => {
 
 router.post('/orders/validate', (req, res) => {
   const order = req.body
-  return validateOrder(order).then(() => {
+  return validateOrder(protocolInstance, order).then(() => {
     res.json({result: true, error: null})
   }).catch(err => fail(req, res, 400, err))
 })
@@ -94,6 +109,7 @@ router.post('/orders/validate', (req, res) => {
 app.use('/v0', router)
 
 const go = ({ port, provider, network, production }) => {
+  protocolInstance = new WyvernProtocol(new Web3.providers.HttpProvider(provider), { network })
   sequelize
     .sync()
     .then(() => {
