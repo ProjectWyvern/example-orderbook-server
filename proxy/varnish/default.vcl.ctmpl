@@ -1,0 +1,52 @@
+vcl 4.0;
+
+import std;
+import var;
+import directors;
+import vsthrottle;
+
+{{range service "backend"}}
+backend {{.Name}}_{{.ID}} {
+    .host = "{{.Address}}";
+    .port = "{{.Port}}";
+}{{end}}
+
+sub vcl_init {
+  new bar = directors.round_robin();
+{{range service "backend"}}
+  bar.add_backend({{.Name}}_{{.ID}});{{end}}
+}
+
+sub vcl_recv {
+    if (vsthrottle.is_denied(client.identity, 15, 10s)) {
+        # Client has exceeded 15 reqs per 10s
+        return (synth(429, "Too Many Requests"));
+    }
+    # Only allow a few non-GET/HEADs per client.
+    if (req.method != "GET" && req.method != "HEAD") {
+        if (vsthrottle.is_denied("rw" + client.identity, 2, 10s)) {
+            return (synth(429, "Too Many Requests"));
+        }
+    }
+    unset req.http.Cookie;
+    set req.url = std.querysort(req.url);
+    set req.backend_hint = bar.backend();
+    var.set_real("start", std.time2real(now, 0));
+}
+
+sub vcl_backend_response {
+    set beresp.ttl = 10s;
+}
+
+sub vcl_deliver {
+    set resp.http.X-Timedelta = now - std.real2time(var.get_real("start"), now);
+    set resp.http.X-RateLimit-Remaining = vsthrottle.remaining(client.identity, 15, 10s);
+    unset resp.http.X-Varnish;
+    unset resp.http.Via;
+    if (obj.hits > 0) {
+      set resp.http.X-Cache = "HIT";
+    } else {
+      set resp.http.X-Cache = "MISS";
+    }
+    return (deliver);
+}

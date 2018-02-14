@@ -1,6 +1,6 @@
 #!/bin/sh
 
 while true; do
-  node index.js | bunyan -o short
+  node index.js
   sleep 1
 done
