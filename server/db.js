@@ -3,7 +3,7 @@ const Sequelize = require('sequelize')
 const log = require('./logging.js')
 
 const sequelize = new Sequelize('orderbook', 'postgres', 'postgres', {
-  host: 'localhost',
+  host: '172.17.0.1',
   dialect: 'postgres',
   pool: {max: 10, min: 0, acquire: 30000, idle: 10000},
   operatorsAliases: false,

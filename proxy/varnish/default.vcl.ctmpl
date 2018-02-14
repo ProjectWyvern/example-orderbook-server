@@ -6,7 +6,7 @@ import directors;
 import vsthrottle;
 
 {{range service "backend"}}
-backend {{.Name}}_{{.ID}} {
+backend {{.Name}}_{{.ID | replaceAll "-" "_"}} {
     .host = "{{.Address}}";
     .port = "{{.Port}}";
 }{{end}}
@@ -14,7 +14,7 @@ backend {{.Name}}_{{.ID}} {
 sub vcl_init {
   new bar = directors.round_robin();
 {{range service "backend"}}
-  bar.add_backend({{.Name}}_{{.ID}});{{end}}
+  bar.add_backend({{.Name}}_{{.ID | replaceAll "-" "_"}});{{end}}
 }
 
 sub vcl_recv {
@@ -35,7 +35,7 @@ sub vcl_recv {
 }
 
 sub vcl_backend_response {
-    set beresp.ttl = 10s;
+    set beresp.ttl = 5s;
 }
 
 sub vcl_deliver {

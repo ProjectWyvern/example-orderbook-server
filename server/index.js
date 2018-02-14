@@ -22,14 +22,11 @@ const app = express()
 app.use(helmet())
 app.use(bodyParser.json())
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET, POST, HEAD')
-  res.header('Access-Control-Allow-Headers', 'Content-Type')
-  next()
-})
-
 const router = express.Router()
+
+router.get('/check', (req, res) => {
+  res.json({result: true, error: null})
+})
 
 router.get('/orders', (req, res) => {
   var where = {

@@ -20,7 +20,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
 
 RUN ln -s $NVM_DIR/versions/node/v$NODE_VERSION/bin/node /usr/bin/node
 
-RUN apt-get -y install git
+RUN apt-get -y install git python make g++
 
 RUN mkdir /app
 WORKDIR /app

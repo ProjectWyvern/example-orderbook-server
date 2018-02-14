@@ -14,5 +14,5 @@ varnishncsa -F '%t %h "%r" %s %b "%{Referer}i" "%{User-agent}i" %{Varnish:hitmis
 
 /usr/local/bin/consul-template \
   -log-level=${LOG_LEVEL:-warn} \
-  -consul-addr="172.17.0.1:8500" \
+  -consul-addr="127.0.0.1:8500" \
   -template="/tmp/default.vcl.ctmpl:/etc/varnish/default.vcl:${RESTART_COMMAND}"

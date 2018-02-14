@@ -18,6 +18,7 @@ job "varnish" {
       driver = "docker"
       config {
         image = "protinam/varnish"
+        network_mode = "host"
         port_map {
           "http" = 80
         }
