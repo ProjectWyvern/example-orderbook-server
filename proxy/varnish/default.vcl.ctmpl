@@ -18,6 +18,13 @@ sub vcl_init {
 }
 
 sub vcl_recv {
+    unset req.http.X-Forwarded-For;
+    if (req.http.cf-connecting-ip) {
+      set req.http.X-Forwarded-For = req.http.cf-connecting-ip;
+    } else {
+      set req.http.X-Forwarded-For = client.ip;
+    }
+    set client.identity = req.http.X-Forwarded-For;
     if (vsthrottle.is_denied(client.identity, 15, 10s)) {
         # Client has exceeded 15 reqs per 10s
         return (synth(429, "Too Many Requests"));
