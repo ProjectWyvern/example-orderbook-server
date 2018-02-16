@@ -18,7 +18,7 @@ job "hitch" {
       driver = "docker"
       config {
         network_mode = "host"
-        image = "protinam/hitch"
+        image = "hitch:deploy"
         port_map {
           "https" = 443
         }

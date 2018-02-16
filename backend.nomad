@@ -18,8 +18,7 @@ job "backend" {
 		task "backend" {
 			driver = "docker"
 			config {
-			  image = "protinam/backend"
-        ssl = true
+			  image = "backend:deploy"
 				port_map {
           "http"    = 8080
 				}

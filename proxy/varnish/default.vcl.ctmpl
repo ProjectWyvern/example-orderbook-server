@@ -25,13 +25,13 @@ sub vcl_recv {
       set req.http.X-Forwarded-For = client.ip;
     }
     set client.identity = req.http.X-Forwarded-For;
-    if (vsthrottle.is_denied(client.identity, 15, 10s)) {
+    if (vsthrottle.is_denied(client.identity, 30, 10s)) {
         # Client has exceeded 15 reqs per 10s
         return (synth(429, "Too Many Requests"));
     }
     # Only allow a few non-GET/HEADs per client.
     if (req.method != "GET" && req.method != "HEAD") {
-        if (vsthrottle.is_denied("rw" + client.identity, 2, 10s)) {
+        if (vsthrottle.is_denied("rw" + client.identity, 3, 10s)) {
             return (synth(429, "Too Many Requests"));
         }
     }
@@ -47,7 +47,7 @@ sub vcl_backend_response {
 
 sub vcl_deliver {
     set resp.http.X-Timedelta = now - std.real2time(var.get_real("start"), now);
-    set resp.http.X-RateLimit-Remaining = vsthrottle.remaining(client.identity, 15, 10s);
+    set resp.http.X-RateLimit-Remaining = vsthrottle.remaining(client.identity, 30, 10s);
     unset resp.http.X-Varnish;
     unset resp.http.Via;
     if (obj.hits > 0) {

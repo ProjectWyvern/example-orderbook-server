@@ -21,7 +21,7 @@ else
 fi
 
 exec bash -c \
-  "exec /usr/local/sbin/hitch --user=hitch \
+  "exec /usr/local/sbin/hitch --user=hitch --quiet \
   $HITCH_PARAMS \
   --ciphers=$HITCH_CIPHER \
   $HITCH_PEM"

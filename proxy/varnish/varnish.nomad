@@ -17,7 +17,7 @@ job "varnish" {
     task "varnish" {
       driver = "docker"
       config {
-        image = "protinam/varnish"
+        image = "varnish:deploy"
         network_mode = "host"
         port_map {
           "http" = 80
