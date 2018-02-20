@@ -25,6 +25,7 @@ RUN apt-get -y install git python make g++
 RUN mkdir /app
 WORKDIR /app
 ADD package.json  /app/package.json
+ADD yarn.lock     /app/yarn.lock
 RUN yarn
 ADD server/       /app/server
 ADD run.sh        /app/run.sh

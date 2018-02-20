@@ -7,15 +7,15 @@ job "backend" {
 		stagger = "10s"
 		max_parallel = 1
 	}
-	group "backend" {
-		count = 1
+	group "backend-server" {
+		count = 3
 		restart {
 			attempts = 10
 			interval = "5m"
 			delay = "5s"
 			mode = "delay"
 		}
-		task "backend" {
+		task "backend-server" {
 			driver = "docker"
 			config {
 			  image = "backend:deploy"
@@ -39,9 +39,59 @@ job "backend" {
 				cpu = 1000
 				memory = 1024
 				network {
-					mbits = 5
+					mbits = 10
           port "http" {
           }
+				}
+			}
+		}
+  }
+	group "backend-sync-orderbook" {
+		count = 1
+		restart {
+			attempts = 10
+			interval = "5m"
+			delay = "5s"
+			mode = "delay"
+		}
+		task "backend-sync-orderbook" {
+			driver = "docker"
+			config {
+			  image = "backend:deploy"
+			}
+      env {
+        "WYVERN_SYNC_ORDERBOOK" = "1"
+      }
+			resources {
+				cpu = 1000
+				memory = 1024
+				network {
+					mbits = 10
+				}
+			}
+		}
+  }
+	group "backend-sync-logs" {
+		count = 1
+		restart {
+			attempts = 10
+			interval = "5m"
+			delay = "5s"
+			mode = "delay"
+		}
+		task "backend-sync-logs" {
+			driver = "docker"
+			config {
+			  image = "backend:deploy"
+			}
+      env {
+        "WYVERN_SYNC_LOGS" = "1"
+      }
+			resources {
+				cpu = 2000
+				memory = 2048
+				network {
+					mbits = 10
 				}
 			}
 		}

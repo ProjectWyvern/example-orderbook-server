@@ -24,11 +24,13 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "bunyan": "^1.8.12",
+    "ethereumjs-abi": "https://github.com/ProjectWyvern/ethereumjs-abi.git",
     "express": "^4.16.2",
     "helmet": "^3.10.0",
     "pg": "^7.4.1",
     "sequelize": "^4.31.2",
     "web3": "^0.20.4",
-    "wyvern-js": "0.1.0"
+    "wyvern-js": "0.1.1",
+    "wyvern-schemas": "0.1.6"
   }
 }
