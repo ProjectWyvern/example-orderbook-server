@@ -27,10 +27,11 @@
     "ethereumjs-abi": "https://github.com/ProjectWyvern/ethereumjs-abi.git",
     "express": "^4.16.2",
     "helmet": "^3.10.0",
+    "lru_map": "^0.3.3",
     "pg": "^7.4.1",
     "sequelize": "^4.31.2",
     "web3": "^0.20.4",
     "wyvern-js": "0.1.1",
-    "wyvern-schemas": "0.1.6"
+    "wyvern-schemas": "^0.3.0"
   }
 }

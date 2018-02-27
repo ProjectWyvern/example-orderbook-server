@@ -36,7 +36,7 @@ job "varnish" {
       }
       resources {
         cpu = 1024
-        memory = 1596
+        memory = 4000
         network {
           mbits = 10
           port "http" {

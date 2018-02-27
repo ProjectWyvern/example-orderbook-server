@@ -8,7 +8,7 @@ const { schemas } = require('wyvern-schemas')
 
 const { validateOrder } = require('./validate.js')
 const log = require('./logging.js')
-const { scanOrderbook, syncLogs, syncAssets } = require('./scan.js')
+const { scanOrderbook, syncLogs, syncAssets, updateAssets } = require('./scan.js')
 
 var protocolInstance
 var web3Provider
@@ -30,6 +30,7 @@ const go = (config) => {
   app.use(bodyParser.json())
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', 'https://exchange.projectwyvern.com')
+    res.header('Access-Control-Allow-Headers', 'Content-Type')
     next()
   })
 
@@ -59,7 +60,13 @@ const go = (config) => {
     if (req.query.owner) {
       where.owner = req.query.owner
     }
-    var order = [['updatedAt', 'DESC']]
+    var order = [['createdAt', 'DESC']]
+    if (req.query.order) {
+      switch (req.query.order) {
+        case '1': order = [['createdAt', 'DESC']]; break
+        case '2': order = [['createdAt', 'ASC']]; break
+      }
+    }
     const { limit, offset } = parseLimitOffset(req)
     var query = { where, order, limit, offset }
     return Asset.findAll(query).then(assets => {
@@ -110,6 +117,7 @@ const go = (config) => {
   })
 
   router.get('/orders', (req, res) => {
+    var include = orderInclude
     var where = {
       markedInvalid: req.query.markedInvalid === '1',
       cancelledOrFinalized: req.query.cancelledOrFinalized === '1'
@@ -127,13 +135,10 @@ const go = (config) => {
       where.side = req.query.side
     }
     if (req.query.schema) {
-      where.schema = req.query.schema
+      include = [{model: Asset, as: 'asset', where: {schema: req.query.schema}}, {model: Settlement, as: 'settlement'}]
     }
     if (req.query.saleKind) {
       where.saleKind = req.query.saleKind
-    }
-    if (req.query.filter) {
-      where.title = [Op.like, req.query.filter]
     }
     if (req.query.createdSince) {
       where.createdAt = [Op.ge, parseInt(req.query.createdSince)]
@@ -148,7 +153,7 @@ const go = (config) => {
       }
     }
     const { limit, offset } = parseLimitOffset(req)
-    const query = { where, order, limit, offset, include: orderInclude }
+    const query = { where, order, limit, offset, include: include }
     return Order.findAll(query).then(orders => {
       res.json({result: orders.map(decodeOrder), error: null})
     }).catch(err => {
@@ -204,7 +209,9 @@ const go = (config) => {
         scanOrderbook(web3, protocolInstance, network, { Order })
       } else if (process.env.WYVERN_SYNC_LOGS) {
         syncLogs(web3, protocolInstance, { sequelize, Sequelize, Op, Synced, Settlement, Order, startBlockNumber })
-        schemas[network].filter(s => s.events.transfer).map(s => syncAssets(s, web3, protocolInstance, { sequelize, Sequelize, Synced, Asset }))
+        schemas[network].filter(s => s.events.transfer.length > 0).map(s => syncAssets(s, web3, protocolInstance, { sequelize, Sequelize, Synced, Asset }))
+        schemas[network].map(s => updateAssets(s, web3, { Op, Asset }))
+        setTimeout(() => process.exit(1), 60 * 30 * 1000)
       } else {
         app.listen(port, () => {
           log.info('Listening on port ' + port)

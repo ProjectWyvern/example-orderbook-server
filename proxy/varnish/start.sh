@@ -8,7 +8,7 @@ echo "Binding on ${VARNISH_IP}:${VARNISH_PORT}"
 
 dd if=/dev/random of=/tmp/secret count=1
 
-varnishd -f /etc/varnish/default.vcl -s malloc,1024M -a ${VARNISH_IP}:${VARNISH_PORT} -T localhost:6081 -S /tmp/secret
+varnishd -f /etc/varnish/default.vcl -s malloc,3500M -a ${VARNISH_IP}:${VARNISH_PORT} -T localhost:6081 -S /tmp/secret
 
 varnishncsa -F '%t %{X-Forwarded-For}i "%r" %s %b "%{Referer}i" "%{User-agent}i" %{Varnish:hitmiss}x %{Varnish:time_firstbyte}x' &
 

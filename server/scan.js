@@ -1,4 +1,5 @@
 const { WyvernProtocol } = require('wyvern-js')
+const { LRUMap } = require('lru_map')
 
 const log = require('./logging.js')
 const { canSettleOrder } = require('./misc.js')
@@ -29,7 +30,8 @@ const scanOrderbook = (web3, protocolInstance, network, { Order }) => {
             parseInt(order.v),
             order.r,
             order.s)
-          if (!valid) {
+          const expired = order.expirationTime !== '0' && parseInt(order.expirationTime) < (Date.now() / 1000)
+          if (!valid || expired) {
             order.cancelledOrFinalized = true
             return order.save().then(() => {
               log.info('Order ' + order.hash + ' marked cancelled or finalized')
@@ -59,7 +61,7 @@ const scanOrderbook = (web3, protocolInstance, network, { Order }) => {
   scanFunc()
 }
 
-const genericSync = async (what, event, onEvent, web3, protocolInstance, { sequelize, Sequelize, Synced }) => {
+const genericSync = async (what, startBlock, event, onEvent, web3, protocolInstance, { sequelize, Sequelize, Synced }) => {
   const syncFunc = async () => {
     try {
       await (async () => {
@@ -67,12 +69,12 @@ const genericSync = async (what, event, onEvent, web3, protocolInstance, { seque
         currentBlockNumber = parseInt(currentBlockNumber)
         const synced = await Synced.findOne({where: {what}}).catch(() => null)
         if (synced === null) {
-          return Synced.create({what, blockNumber: 1500000})
+          return Synced.create({what, blockNumber: Math.max(startBlock - 1, 0)})
         } else {
           const lastSyncedBlockNumber = parseInt(synced.blockNumber)
           if (lastSyncedBlockNumber < currentBlockNumber) {
             const fromBlock = lastSyncedBlockNumber + 1
-            const toBlock = Math.min(lastSyncedBlockNumber + 1000, currentBlockNumber)
+            const toBlock = Math.min(lastSyncedBlockNumber + 100, currentBlockNumber)
             return sequelize.transaction({isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED}, txn => {
               const args = { fromBlock, toBlock }
               return promisify(c => event({}, args).get(c)).then(async events => {
@@ -96,17 +98,32 @@ const genericSync = async (what, event, onEvent, web3, protocolInstance, { seque
   syncFunc()
 }
 
+var cache = new LRUMap(10000, [])
+
+const cached = (func, prefix) => {
+  return async (arg) => {
+    const key = prefix + ':' + JSON.stringify(arg)
+    const val = cache.get(key)
+    if (val) {
+      return val
+    } else {
+      const res = await func(arg)
+      cache.set(key, res)
+      return res
+    }
+  }
+}
+
 const syncAssets = (schema, web3, protocolInstance, config) => {
   const { Asset } = config
-  const transfer = schema.events.transfer
+  const transfer = schema.events.transfer[0] // TODO support multiple events
   const event = web3.eth.contract([transfer]).at(transfer.target)[transfer.name]
   const destination = transfer.inputs.filter(i => i.kind === 'destination')[0]
-  return genericSync(schema.name, event, (event, txn) => {
+  return genericSync(schema.name, schema.deploymentBlock, event, (event, txn) => {
     const owner = event.args[destination.name].toLowerCase()
     const asset = transfer.assetFromInputs(event.args)
     const hash = WyvernProtocol.getAssetHashHex(schema.hash(asset), schema.name)
-    console.log('schema: ' + schema.name, 'asset: ' + asset, 'hash: ' + hash, 'owner: ' + owner)
-    return schema.formatter(asset).then(formatted => {
+    return cached((asset) => schema.formatter(asset, web3), schema.name)(asset).then(formatted => {
       return Asset.upsert({
         hash,
         owner,
@@ -117,6 +134,29 @@ const syncAssets = (schema, web3, protocolInstance, config) => {
       }, {transaction: txn})
     })
   }, web3, protocolInstance, config)
+}
+
+const updateAssets = (schema, web3, config) => {
+  const { Op, Asset } = config
+  const updateFunc = async () => {
+    try {
+      await (async () => {
+        await Asset.findAll({where: {schemaVersion: {[Op.ne]: schema.version}, schema: schema.name}, limit: 20}).then(async assets => {
+          await Promise.all(assets.map(async asset => {
+            return cached((asset) => schema.formatter(asset, web3), schema.name)(asset.asset).then(formatted => {
+              asset.formatted = formatted
+              asset.schemaVersion = schema.version
+              return asset.save()
+            })
+          }))
+        })
+      })()
+    } catch (err) {
+      log.warn({err: err.stack}, 'Error updating assets')
+    }
+    setTimeout(updateFunc, 100)
+  }
+  updateFunc()
 }
 
 const syncLogs = async (web3, protocolInstance, { sequelize, Sequelize, Op, Synced, Settlement, Order, startBlockNumber }) => {
@@ -170,4 +210,4 @@ const syncLogs = async (web3, protocolInstance, { sequelize, Sequelize, Op, Sync
   syncFunc()
 }
 
-module.exports = { scanOrderbook, syncLogs, syncAssets }
+module.exports = { scanOrderbook, syncLogs, syncAssets, updateAssets }

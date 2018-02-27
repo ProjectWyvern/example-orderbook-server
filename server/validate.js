@@ -20,7 +20,7 @@ const validateOrder = async (web3, protocolInstance, order, { network, feeRecipi
   /* Check timestamps. */
   const listingTime = parseInt(order.listingTime)
   const expirationTime = parseInt(order.expirationTime)
-  assertEqual(listingTime >= now - 60, true, 'Expected listingTime to be at or past the current time')
+  assertEqual(listingTime >= now - 200, true, 'Expected listingTime to be at or past the current time')
   assertEqual(expirationTime === 0 || expirationTime >= now - 60, true, 'Expected expirationTime to be at or past the current time, or zero')
 
   /* Check metadata agreement. */
@@ -37,7 +37,7 @@ const validateOrder = async (web3, protocolInstance, order, { network, feeRecipi
   assertEqual(order.staticExtradata, '0x', 'Expected staticExtradata to match')
 
   /* Check formatted. */
-  const formatted = await schema.formatter(order.metadata.asset)
+  const formatted = await schema.formatter(order.metadata.asset, web3)
 
   /* Check if order can be settled. */
   if (order.side === '1') {
