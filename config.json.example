@@ -1,0 +1,11 @@
+{
+  "db_user": "",
+  "db_name": "",
+  "db_pass": "",
+  "db_host": "",
+  "port": 8080,
+  "provider": "https://mainnet.infura.io",
+  "network": "main",
+  "feeRecipient": "0x11db40014E2985c360B3f2A4bA350fBf104Dc326",
+  "startBlockNumber": 5110924
+}
