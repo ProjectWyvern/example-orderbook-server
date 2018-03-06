@@ -56,9 +56,12 @@ module.exports = (config) => {
     exchange: {type: Sequelize.TEXT, allowNull: false},
     maker: {type: Sequelize.TEXT, allowNull: false},
     taker: {type: Sequelize.TEXT, allowNull: false},
-    makerFee: {type: Sequelize.TEXT, allowNull: false},
-    takerFee: {type: Sequelize.TEXT, allowNull: false},
+    makerRelayerFee: {type: Sequelize.TEXT, allowNull: false},
+    takerRelayerFee: {type: Sequelize.TEXT, allowNull: false},
+    makerProtocolFee: {type: Sequelize.TEXT, allowNull: false},
+    takerProtocolFee: {type: Sequelize.TEXT, allowNull: false},
     feeRecipient: {type: Sequelize.TEXT, allowNull: false},
+    feeMethod: {type: Sequelize.TEXT, allowNull: false},
     side: {type: Sequelize.TEXT, allowNull: false},
     saleKind: {type: Sequelize.TEXT, allowNull: false},
     target: {type: Sequelize.TEXT, allowNull: false},
@@ -110,6 +113,7 @@ module.exports = (config) => {
   var decodeOrder
 
   decodeAsset = asset => {
+    if (asset === null) return null
     asset = _.omit((asset.toJSON ? asset.toJSON() : asset), ['createdAt', 'updatedAt', 'version'])
     if (asset.orders) {
       asset.orders = asset.orders.map(decodeOrder)

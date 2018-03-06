@@ -20,7 +20,8 @@ const scanOrderbook = (web3, protocolInstance, network, { Order }) => {
         return Promise.all(orders.map(async order => {
           const valid = await protocolInstance.wyvernExchange.validateOrder_.callAsync(
             [order.exchange, order.maker, order.taker, order.feeRecipient, order.target, order.staticTarget, order.paymentToken],
-            [order.makerFee, order.takerFee, order.basePrice, order.extra, order.listingTime, order.expirationTime, order.salt],
+            [order.makerRelayerFee, order.takerRelayerFee, order.makerProtocolFee, order.takerProtocolFee, order.basePrice, order.extra, order.listingTime, order.expirationTime, order.salt],
+            order.feeMethod,
             order.side,
             order.saleKind,
             order.howToCall,
@@ -119,9 +120,9 @@ const syncAssets = (schema, web3, protocolInstance, config) => {
   const transfer = schema.events.transfer[0] // TODO support multiple events
   const event = web3.eth.contract([transfer]).at(transfer.target)[transfer.name]
   const destination = transfer.inputs.filter(i => i.kind === 'destination')[0]
-  return genericSync(schema.name, schema.deploymentBlock, event, (event, txn) => {
+  return genericSync(schema.name, schema.deploymentBlock, event, async (event, txn) => {
     const owner = event.args[destination.name].toLowerCase()
-    const asset = transfer.assetFromInputs(event.args)
+    const asset = await transfer.assetFromInputs(event.args, web3)
     const hash = WyvernProtocol.getAssetHashHex(schema.hash(asset), schema.name)
     return cached((asset) => schema.formatter(asset, web3), schema.name)(asset).then(formatted => {
       return Asset.upsert({
